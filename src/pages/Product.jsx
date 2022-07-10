@@ -1,26 +1,31 @@
 import React from 'react'
 import { Row, Col, Card, Image, Descriptions, Spin } from "antd";
-
+import useSWR from 'swr';
+import axios from "axios";
+import { useParams } from 'react-router-dom';
 const Product = () => {
+  let { id } = useParams();
+  const fetcher = url => axios.get(url).then(res => res.data)
+  const {data:SingleProduct, error } = useSWR(`http://localhost:4000/products/${id}`, fetcher);
+  // console.log("data",data);
   return (
     <div>
-     <Card title="View Product Detials">
+        <Card title="View Product Detials">
      <Row gutter={[0, 20]}>
      <Col span={8}>
               <Image
                 width={200}
-                src="https://loremflickr.com/320/240/dress?random=1"
+                src={`https://loremflickr.com/320/240/dress?random=${id}`}
               />
             </Col>
             <Col span={16}>
             <Descriptions title="User Info" layout="vertical">
-            <Descriptions.Item label="UserName">Zhou Maomao</Descriptions.Item>
-    <Descriptions.Item label="Telephone">1810000000</Descriptions.Item>
-    <Descriptions.Item label="Live">Hangzhou, Zhejiang</Descriptions.Item>
-    <Descriptions.Item label="Address" span={2}>
-      No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China
-    </Descriptions.Item>
-    <Descriptions.Item label="Remark">empty</Descriptions.Item>
+            <Descriptions.Item label="name">{SingleProduct?.title}</Descriptions.Item>
+     <Descriptions.Item label="description">{SingleProduct?.description}</Descriptions.Item>
+     <Descriptions.Item label="price">{SingleProduct?.price}</Descriptions.Item>
+     <Descriptions.Item label="category" span={2}>
+      {SingleProduct?.category}
+     </Descriptions.Item>
 
             </Descriptions>
               </Col>
